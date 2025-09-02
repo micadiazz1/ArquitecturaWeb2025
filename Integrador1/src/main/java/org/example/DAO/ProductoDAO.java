@@ -6,4 +6,6 @@ public interface ProductoDAO {
 
     void insertProducto();
 
+    void getTopProduct();
+
 }

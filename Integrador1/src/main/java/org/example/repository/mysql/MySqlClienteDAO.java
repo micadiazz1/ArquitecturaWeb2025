@@ -45,7 +45,7 @@ public class MySqlClienteDAO implements ClienteDAO {
                 statement.setString(3, row.get("email"));
                 statement.executeUpdate();
             }
-            
+
         }catch (SQLIntegrityConstraintViolationException e) {
             System.out.println("La tabla Cliente ya esta cargada");
         } catch (IOException | SQLException e) {
