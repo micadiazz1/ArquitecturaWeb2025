@@ -1,4 +1,6 @@
 package org.example.DAO;
+import org.example.entity.Producto;
+import org.example.entity.TopProducto;
 
 public interface ProductoDAO {
 
@@ -6,6 +8,6 @@ public interface ProductoDAO {
 
     void insertProducto();
 
-    void getTopProduct();
+    TopProducto getTopProduct();
 
 }
