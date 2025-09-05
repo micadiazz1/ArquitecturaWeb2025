@@ -11,16 +11,45 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementación MySQL de la interfaz {@link ProductoDAO}.
+ * <p>
+ * Se encarga de manejar las operaciones de persistencia sobre la tabla {@code Producto},
+ * incluyendo la creación de la tabla, inserción de datos desde un archivo CSV,
+ * y consultas específicas como el producto más vendido.
+ * </p>
+ */
 public class MySqlProductoDAO implements ProductoDAO {
     private final Connection conn;
-    //falta arreglar el tema de que no reconoce las rutas
-    //src/main/java/org/example/utils/productos.csv
+
+    /**
+     * Ruta del archivo CSV que contiene los datos de productos.
+     * Se utiliza para poblar la tabla {@code Producto}.
+     *
+     * Esto se debe arreglar, el CSVReader por alguna razon no reconoce el path.
+     */
     private final String path = "src/main/java/org/example/utils/productos.csv";
 
+    /**
+     * Constructor que inicializa la conexión con la base de datos.
+     *
+     * @param conn conexión activa a la base de datos MySQL
+     */
     public MySqlProductoDAO(Connection conn) {
         this.conn = conn;
     }
 
+    /**
+     * Crea la tabla {@code Producto} si no existe en la base de datos.
+     * <p>
+     * La tabla contiene los campos:
+     * <ul>
+     *     <li>idProducto (INT, PK)</li>
+     *     <li>nombre (VARCHAR)</li>
+     *     <li>valor (FLOAT)</li>
+     * </ul>
+     * </p>
+     */
     @Override
     public void createTable() {
         String createProductoTable = "CREATE TABLE IF NOT EXISTS Producto (" +
@@ -38,15 +67,20 @@ public class MySqlProductoDAO implements ProductoDAO {
         }
     }
 
+    /**
+     * Inserta los productos en la tabla {@code Producto} a partir de un archivo CSV.
+     * <p>
+     * Utiliza batch processing para optimizar las inserciones (en bloques de 1000 registros).
+     * Controla errores de integridad y formato de datos, aplicando rollback en caso necesario.
+     * </p>
+     */
     @Override
     public void insertProducto() {
-        // Usar try-with-resources para todos los recursos
         try (FileReader reader = new FileReader(this.path);
              CSVParser parser = CSVFormat.DEFAULT.withHeader().parse(reader);
              PreparedStatement statement = conn.prepareStatement(
                      "INSERT INTO Producto (idProducto, nombre, valor) VALUES (?, ?, ?)")) {
 
-            // Desactivar auto-commit para transacción
             conn.setAutoCommit(false);
 
             int batchCount = 0;
@@ -55,7 +89,7 @@ public class MySqlProductoDAO implements ProductoDAO {
             for (CSVRecord row : parser) {
                 statement.setInt(1, Integer.parseInt(row.get("idProducto")));
                 statement.setString(2, row.get("nombre"));
-                statement.setFloat(3, Float.parseFloat(row.get("valor"))); // ← Conversión correcta a float
+                statement.setFloat(3, Float.parseFloat(row.get("valor")));
                 statement.addBatch();
 
                 batchCount++;
@@ -67,7 +101,6 @@ public class MySqlProductoDAO implements ProductoDAO {
                 }
             }
 
-            // Ejecutar el batch final
             statement.executeBatch();
             conn.commit();
 
@@ -89,6 +122,15 @@ public class MySqlProductoDAO implements ProductoDAO {
         }
     }
 
+    /**
+     * Obtiene el producto con mayor recaudación total.
+     * <p>
+     * Calcula la cantidad vendida y la recaudación multiplicando el precio
+     * por la cantidad en la relación {@code Factura_Producto}.
+     * </p>
+     *
+     * @return instancia de {@link TopProducto} con el producto top, o {@code null} si no hay ventas
+     */
     @Override
     public TopProducto getTopProduct() {
         String query = "SELECT p.nombre, p.valor as valor_unitario, " +
@@ -120,7 +162,9 @@ public class MySqlProductoDAO implements ProductoDAO {
         }
     }
 
-    // Métodos auxiliares para transacciones
+    /**
+     * Realiza un rollback de la transacción actual.
+     */
     private void rollbackTransaction() {
         try {
             conn.rollback();
@@ -130,6 +174,9 @@ public class MySqlProductoDAO implements ProductoDAO {
         }
     }
 
+    /**
+     * Restaura el modo de auto-commit en la conexión.
+     */
     private void restoreAutoCommit() {
         try {
             conn.setAutoCommit(true);
@@ -138,7 +185,15 @@ public class MySqlProductoDAO implements ProductoDAO {
         }
     }
 
-    // Método adicional útil: obtener todos los productos para debugging
+    /**
+     * Obtiene todos los productos de la tabla {@code Producto}.
+     * <p>
+     * Este método está pensado para debugging y muestra los productos
+     * recuperados en consola.
+     * </p>
+     *
+     * @return lista de productos como {@link TopProducto} (aunque no se completa con recaudación)
+     */
     public List<TopProducto> getAllProducts() {
         List<TopProducto> productos = new ArrayList<>();
         String query = "SELECT idProducto, nombre, valor FROM Producto";
@@ -147,7 +202,6 @@ public class MySqlProductoDAO implements ProductoDAO {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                // Adaptar según tu constructor de TopProducto
                 System.out.println("Producto: " + rs.getString("nombre") +
                         ", Valor: " + rs.getFloat("valor"));
             }

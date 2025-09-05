@@ -4,7 +4,6 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.example.DAO.ClienteDAO;
-import org.example.entity.Cliente;
 import org.example.entity.ClienteFactura;
 
 import java.io.File;
@@ -14,15 +13,40 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Access Object (DAO) para la entidad {@code Cliente} bajo JDBC con MySQL.
+ * <p>
+ * Funcionalidades principales:
+ * <ul>
+ *   <li>Crea la tabla {@code Cliente} en la base de datos</li>
+ *   <li>Inserta registros desde un archivo CSV</li>
+ *   <li>Devuelve un listado de clientes ordenados por facturación</li>
+ * </ul>
+ */
 public class MySqlClienteDAO implements ClienteDAO {
+
+    /** Conexión activa a la base de datos MySQL */
     private final Connection conn;
-    //falta arreglar el tema de que no reconoce las rutas
+
+    /** Ruta al archivo CSV con datos de clientes
+     *  Esto se debe arreglar, el CSVReader por alguna razon no reconoce el path.
+     * */
     private final String csvPath = "src/main/java/org/example/utils/cliente.csv";
 
+    /**
+     * Constructor de clase.
+     *
+     * @param conn conexión con la base de datos
+     */
     public MySqlClienteDAO(Connection conn) {
         this.conn = conn;
     }
 
+    /**
+     * Crea la tabla {@code Cliente} en la base de datos si no existe.
+     *
+     * @throws RuntimeException si ocurre un error SQL al crear la tabla
+     */
     @Override
     public void createTable() {
         String create = "CREATE TABLE IF NOT EXISTS Cliente (" +
@@ -39,9 +63,15 @@ public class MySqlClienteDAO implements ClienteDAO {
         }
     }
 
+    /**
+     * Inserta registros en la tabla {@code Cliente}, leyendo datos desde un archivo CSV.
+     * <p>
+     * Utiliza transacciones y ejecución en batch para optimizar el proceso.
+     *
+     * @throws RuntimeException si ocurre un error de SQL, I/O o formato de datos
+     */
     @Override
     public void insertCliente() {
-        // Mostrar información de debug de la ruta
         File csvFile = new File(csvPath);
         System.out.println("Buscando archivo CSV en: " + csvFile.getAbsolutePath());
         System.out.println("El archivo existe: " + csvFile.exists());
@@ -53,30 +83,27 @@ public class MySqlClienteDAO implements ClienteDAO {
             return;
         }
 
-        // Usar try-with-resources para asegurar el cierre de todos los recursos
         try (FileReader reader = new FileReader(csvFile);
              CSVParser parser = CSVFormat.DEFAULT.withHeader().parse(reader);
              PreparedStatement statement = conn.prepareStatement(
                      "INSERT INTO Cliente (idCliente, nombre, email) VALUES (?, ?, ?)")) {
 
-            boolean originalAutoCommit = conn.getAutoCommit();
-            conn.setAutoCommit(false); // ← Iniciar transacción para inserción masiva
+            conn.setAutoCommit(false);
 
             int recordCount = 0;
             for (CSVRecord row : parser) {
                 statement.setInt(1, Integer.parseInt(row.get("idCliente")));
                 statement.setString(2, row.get("nombre"));
                 statement.setString(3, row.get("email"));
-                statement.addBatch(); // ← Agregar a lote en lugar de ejecutar inmediatamente
+                statement.addBatch();
                 recordCount++;
             }
 
             System.out.println("Procesando " + recordCount + " registros del CSV...");
+            int[] results = statement.executeBatch();
+            conn.commit();
 
-            int[] results = statement.executeBatch(); // ← Ejecutar todas las inserciones en un solo lote
-            conn.commit(); // ← Confirmar transacción
-
-            System.out.println("Datos de clientes insertados exitosamente. Filas afectadas: " + results.length);
+            System.out.println("Datos insertados exitosamente. Filas afectadas: " + results.length);
 
         } catch (SQLIntegrityConstraintViolationException e) {
             System.out.println("Error de integridad: La tabla Cliente ya contiene estos datos");
@@ -94,6 +121,13 @@ public class MySqlClienteDAO implements ClienteDAO {
         }
     }
 
+    /**
+     * Devuelve una lista de clientes ordenada en forma descendente
+     * según la cantidad de facturas asociadas.
+     *
+     * @return lista de clientes con nombre, email y cantidad de facturas
+     * @throws RuntimeException si ocurre un error SQL durante la consulta
+     */
     @Override
     public List<ClienteFactura> getListClientByBilling() {
         String query = "SELECT c.nombre, c.email, COUNT(f.idFactura) as cantidad_facturas " +
@@ -123,7 +157,9 @@ public class MySqlClienteDAO implements ClienteDAO {
         }
     }
 
-    // Métodos auxiliares para manejo seguro de transacciones
+    /**
+     * Realiza un rollback seguro de la transacción activa si está habilitada.
+     */
     private void safeRollback() {
         try {
             if (!conn.getAutoCommit()) {
@@ -135,6 +171,9 @@ public class MySqlClienteDAO implements ClienteDAO {
         }
     }
 
+    /**
+     * Restaura el modo auto-commit de la conexión.
+     */
     private void safeRestoreAutoCommit() {
         try {
             conn.setAutoCommit(true);
@@ -143,7 +182,10 @@ public class MySqlClienteDAO implements ClienteDAO {
         }
     }
 
-    // Método adicional para debug de la estructura del CSV
+    /**
+     * Método auxiliar para debug:
+     * muestra información del archivo CSV, headers y algunos registros de muestra.
+     */
     public void debugCSVContents() {
         File csvFile = new File(csvPath);
         System.out.println("=== DEBUG CSV ===");
@@ -158,7 +200,7 @@ public class MySqlClienteDAO implements ClienteDAO {
 
                 int sampleCount = 0;
                 for (CSVRecord record : parser) {
-                    if (sampleCount < 3) { // Mostrar solo 3 registros de muestra
+                    if (sampleCount < 3) {
                         System.out.println("Registro " + (sampleCount + 1) + ": " + record.toString());
                     }
                     sampleCount++;

@@ -11,16 +11,54 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
+/**
+ * Implementación de {@link FacturaProductoDAO} para MySQL usando JDBC.
+ * <p>
+ * Este DAO permite:
+ * <ul>
+ *   <li>Crear la tabla intermedia {@code Factura_Producto}</li>
+ *   <li>Insertar registros desde un archivo CSV con relaciones factura-producto</li>
+ *   <li>Manejar transacciones y errores de integridad referencial</li>
+ * </ul>
+ *
+ * El archivo CSV debe tener las siguientes cabeceras:
+ * <pre>
+ *   idFactura, idProducto, cantidad
+ * </pre>
+ */
 public class MySqlFacturaProductoDAO implements FacturaProductoDAO {
-    private final Connection conn;
-    //falta arreglar el tema de que no reconoce las rutas
-    //src/main/java/org/example/utils/facturas-productos
-    private final String path = "org/example/utils/facturas-productos";
 
+    /** Conexión activa con la base de datos */
+    private final Connection conn;
+
+    /**
+     *  Ruta al archivo CSV con las relaciones factura-producto
+     *  Esto se debe arreglar, el CSVReader por alguna razon no reconoce el path.
+     * */
+    private final String path = "src/main/java/org/example/utils/facturas-productos.csv";
+
+    /**
+     * Constructor de clase.
+     *
+     * @param conn conexión a la base de datos MySQL
+     */
     public MySqlFacturaProductoDAO(Connection conn) {
         this.conn = conn;
     }
 
+    /**
+     * Crea la tabla intermedia {@code Factura_Producto} si no existe.
+     * <p>
+     * Estructura de la tabla:
+     * <ul>
+     *   <li>{@code idFactura} (INT, FK a Factura)</li>
+     *   <li>{@code idProducto} (INT, FK a Producto)</li>
+     *   <li>{@code cantidad} (INT)</li>
+     *   <li>Clave primaria compuesta por {@code (idFactura, idProducto)}</li>
+     * </ul>
+     *
+     * @throws RuntimeException si ocurre un error SQL
+     */
     @Override
     public void createTable() {
         String createFacturaProductoTable = "CREATE TABLE IF NOT EXISTS Factura_Producto (" +
@@ -41,29 +79,34 @@ public class MySqlFacturaProductoDAO implements FacturaProductoDAO {
         }
     }
 
+    /**
+     * Inserta datos de relaciones factura-producto desde un archivo CSV.
+     * <p>
+     * Utiliza procesamiento en lotes ({@code batch}) y transacciones
+     * para optimizar el rendimiento y garantizar la consistencia de datos.
+     *
+     * @throws RuntimeException si ocurre un error de integridad, formato del CSV o SQL
+     */
     @Override
     public void insertFacturaProducto() {
-        // Usar try-with-resources para todos los recursos
-        try (FileReader reader = new FileReader("src/main/java/org.example/utils/facturas-productos.csv");
+        try (FileReader reader = new FileReader(this.path);
              CSVParser parser = CSVFormat.DEFAULT.withHeader().parse(reader);
              PreparedStatement statement = conn.prepareStatement(
                      "INSERT INTO Factura_Producto (idFactura, idProducto, cantidad) VALUES (?, ?, ?)")) {
 
-            // Desactivar auto-commit para transacción
             conn.setAutoCommit(false);
 
             int batchCount = 0;
-            final int BATCH_SIZE = 1000; // Procesar en lotes de 1000
+            final int BATCH_SIZE = 1000;
 
             for (CSVRecord row : parser) {
                 statement.setInt(1, Integer.parseInt(row.get("idFactura")));
                 statement.setInt(2, Integer.parseInt(row.get("idProducto")));
                 statement.setInt(3, Integer.parseInt(row.get("cantidad")));
-                statement.addBatch(); // ← Agregar al batch
+                statement.addBatch();
 
                 batchCount++;
 
-                // Ejecutar batch cada BATCH_SIZE registros
                 if (batchCount % BATCH_SIZE == 0) {
                     statement.executeBatch();
                     conn.commit();
@@ -71,7 +114,6 @@ public class MySqlFacturaProductoDAO implements FacturaProductoDAO {
                 }
             }
 
-            // Ejecutar el batch final
             statement.executeBatch();
             conn.commit();
 
@@ -94,6 +136,9 @@ public class MySqlFacturaProductoDAO implements FacturaProductoDAO {
         }
     }
 
+    /**
+     * Revierte la transacción activa en caso de error.
+     */
     private void rollbackTransaction() {
         try {
             conn.rollback();
@@ -103,6 +148,9 @@ public class MySqlFacturaProductoDAO implements FacturaProductoDAO {
         }
     }
 
+    /**
+     * Restaura el valor por defecto de {@code autoCommit}.
+     */
     private void restoreAutoCommit() {
         try {
             conn.setAutoCommit(true);
