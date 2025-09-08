@@ -35,7 +35,7 @@ public class MySqlFacturaDAO implements FacturaDAO {
      * Ruta al archivo CSV de facturas
      * Esto se debe arreglar, el CSVReader por alguna razon no reconoce el path.
      * */
-    private final String path = "org/example/utils/facturas.csv";
+    private final String path = "Integrador1/src/main/java/org/example/utils/facturas.csv";
 
     /**
      * Constructor de clase.

@@ -21,7 +21,7 @@ public class Main {
 
         //llenar tablas con datos
         //falta arreglar el tema de que no reconoce las rutas de los archivos .csv
-        llenarTablas();
+        //llenarTablas();
 
         //Obtener el top producto
         TopProducto topProducto = productoDAO.getTopProduct();
@@ -37,18 +37,19 @@ public class Main {
         clienteDAO.createTable();
         facturaDAO.createTable();
         productoDAO.createTable();
+        facturaProductoDAO.createTable();
     }
 
     public static void llenarTablas(){
-        try {
+        /*try {
             clienteDAO.insertCliente();
 
         } catch (FileNotFoundException e) {
             System.out.println("Error al insertar los clientes en tabla");
             throw new RuntimeException(e);
-        }
+        }*/
 
-        try {
+        /*try {
             productoDAO.insertProducto();
         } catch (Exception e){
             System.out.println("Error al insertar los productos en tabla");
@@ -60,7 +61,7 @@ public class Main {
         } catch (Exception e){
             System.out.println("Error al insertar las facturas  en tabla");
             throw new RuntimeException(e);
-        }
+        }*/
 
         try {
             facturaProductoDAO.insertFacturaProducto();

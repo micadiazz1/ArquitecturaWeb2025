@@ -28,7 +28,7 @@ public class MySqlProductoDAO implements ProductoDAO {
      *
      * Esto se debe arreglar, el CSVReader por alguna razon no reconoce el path.
      */
-    private final String path = "src/main/java/org/example/utils/productos.csv";
+    private final String path = "Integrador1/src/main/java/org/example/utils/productos.csv";
 
     /**
      * Constructor que inicializa la conexión con la base de datos.

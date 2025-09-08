@@ -31,7 +31,7 @@ public class MySqlClienteDAO implements ClienteDAO {
     /** Ruta al archivo CSV con datos de clientes
      *  Esto se debe arreglar, el CSVReader por alguna razon no reconoce el path.
      * */
-    private final String csvPath = "src/main/java/org/example/utils/cliente.csv";
+    private final String csvPath = "Integrador1/src/main/java/org/example/utils/clientes.csv";
 
     /**
      * Constructor de clase.
@@ -131,8 +131,8 @@ public class MySqlClienteDAO implements ClienteDAO {
     @Override
     public List<ClienteFactura> getListClientByBilling() {
         String query = "SELECT c.nombre, c.email, COUNT(f.idFactura) as cantidad_facturas " +
-                "FROM Cliente c " +
-                "JOIN facturas f ON c.idCliente = f.idCliente " +
+                "FROM cliente c " +
+                "JOIN factura f ON c.idCliente = f.idCliente " +
                 "GROUP BY c.idCliente, c.nombre, c.email " +
                 "ORDER BY COUNT(f.idFactura) DESC";
 
