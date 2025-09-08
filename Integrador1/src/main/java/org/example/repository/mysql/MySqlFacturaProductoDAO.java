@@ -30,7 +30,7 @@ public class MySqlFacturaProductoDAO implements FacturaProductoDAO {
 
     /** Conexión activa con la base de datos */
     private final Connection conn;
-
+    private static volatile MySqlFacturaProductoDAO instance;
     /**
      *  Ruta al archivo CSV con las relaciones factura-producto
      *  Esto se debe arreglar, el CSVReader por alguna razon no reconoce el path.
@@ -42,8 +42,15 @@ public class MySqlFacturaProductoDAO implements FacturaProductoDAO {
      *
      * @param conn conexión a la base de datos MySQL
      */
-    public MySqlFacturaProductoDAO(Connection conn) {
+    private MySqlFacturaProductoDAO(Connection conn) {
         this.conn = conn;
+    }
+
+    public static MySqlFacturaProductoDAO getInstance(Connection conn) {
+        if (instance == null) {
+            return new MySqlFacturaProductoDAO(conn);
+        }
+        return instance;
     }
 
     /**

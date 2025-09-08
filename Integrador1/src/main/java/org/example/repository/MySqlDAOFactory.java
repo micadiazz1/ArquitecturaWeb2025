@@ -16,21 +16,21 @@ public class MySqlDAOFactory extends DAOFactory {
 
     @Override
     public ProductoDAO getProductDAO() {
-        return new MySqlProductoDAO(ConnectionManagerSingleton.getInstance().getConnection());
+        return MySqlProductoDAO.getInstance(ConnectionManagerSingleton.getInstance().getConnection());
     }
 
     @Override
     public ClienteDAO getClienteDAO() {
-        return new MySqlClienteDAO(ConnectionManagerSingleton.getInstance().getConnection());
+        return MySqlClienteDAO.getInstance(ConnectionManagerSingleton.getInstance().getConnection());
     }
 
     @Override
     public FacturaProductoDAO getFacturaProductoDAO() {
-        return new MySqlFacturaProductoDAO(ConnectionManagerSingleton.getInstance().getConnection());
+        return MySqlFacturaProductoDAO.getInstance(ConnectionManagerSingleton.getInstance().getConnection());
     }
 
     @Override
     public FacturaDAO getFacturaDAO() {
-        return new MySqlFacturaDAO(ConnectionManagerSingleton.getInstance().getConnection());
+        return MySqlFacturaDAO.getInstance(ConnectionManagerSingleton.getInstance().getConnection());
     }
 }

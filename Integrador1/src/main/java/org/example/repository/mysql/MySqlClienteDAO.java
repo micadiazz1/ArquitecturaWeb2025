@@ -5,6 +5,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.example.DAO.ClienteDAO;
 import org.example.entity.ClienteFactura;
+import org.example.factory.ConnectionManagerSingleton;
 
 import java.io.File;
 import java.io.FileReader;
@@ -27,6 +28,7 @@ public class MySqlClienteDAO implements ClienteDAO {
 
     /** Conexión activa a la base de datos MySQL */
     private final Connection conn;
+    private static volatile MySqlClienteDAO instance;
 
     /** Ruta al archivo CSV con datos de clientes
      *  Esto se debe arreglar, el CSVReader por alguna razon no reconoce el path.
@@ -38,8 +40,15 @@ public class MySqlClienteDAO implements ClienteDAO {
      *
      * @param conn conexión con la base de datos
      */
-    public MySqlClienteDAO(Connection conn) {
+    private MySqlClienteDAO(Connection conn) {
         this.conn = conn;
+    }
+
+    public static MySqlClienteDAO getInstance(Connection conn) {
+        if(instance == null){
+            return new MySqlClienteDAO(conn);
+        }
+        return instance;
     }
 
     /**

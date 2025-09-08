@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class MySqlProductoDAO implements ProductoDAO {
     private final Connection conn;
-
+    private static volatile MySqlProductoDAO instance;
     /**
      * Ruta del archivo CSV que contiene los datos de productos.
      * Se utiliza para poblar la tabla {@code Producto}.
@@ -35,8 +35,15 @@ public class MySqlProductoDAO implements ProductoDAO {
      *
      * @param conn conexión activa a la base de datos MySQL
      */
-    public MySqlProductoDAO(Connection conn) {
+    private MySqlProductoDAO(Connection conn) {
         this.conn = conn;
+    }
+
+    public static MySqlProductoDAO getInstance(Connection conn) {
+        if (instance == null) {
+            return new MySqlProductoDAO(conn);
+        }
+        return instance;
     }
 
     /**
