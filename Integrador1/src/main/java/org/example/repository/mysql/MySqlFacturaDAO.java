@@ -1,11 +1,9 @@
 package org.example.repository.mysql;
 
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.example.DAO.FacturaDAO;
 
-import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -93,8 +91,7 @@ public class MySqlFacturaDAO implements FacturaDAO {
      */
     @Override
     public void insertFactura() {
-        try (FileReader reader = new FileReader(this.path);
-             CSVParser parser = CSVFormat.DEFAULT.withHeader().parse(reader);
+        try (CSVParser parser = ManagerCSV.getInstance().getRecords(this.path);
              PreparedStatement statement = connection.prepareStatement(
                      "INSERT INTO Factura (idFactura, idCliente) VALUES (?, ?)")) {
 

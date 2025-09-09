@@ -1,6 +1,5 @@
 package org.example.repository.mysql;
 
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.example.DAO.ProductoDAO;
@@ -28,7 +27,7 @@ public class MySqlProductoDAO implements ProductoDAO {
      *
      * Esto se debe arreglar, el CSVReader por alguna razon no reconoce el path.
      */
-    private final String path = "Integrador1/src/main/java/org/example/utils/productos.csv";
+    private final String path = "src/main/java/org/example/utils/productos.csv";
 
     /**
      * Constructor que inicializa la conexión con la base de datos.
@@ -84,7 +83,7 @@ public class MySqlProductoDAO implements ProductoDAO {
     @Override
     public void insertProducto() {
         try (FileReader reader = new FileReader(this.path);
-             CSVParser parser = CSVFormat.DEFAULT.withHeader().parse(reader);
+             CSVParser parser = ManagerCSV.getInstance().getRecords(this.path);
              PreparedStatement statement = conn.prepareStatement(
                      "INSERT INTO Producto (idProducto, nombre, valor) VALUES (?, ?, ?)")) {
 

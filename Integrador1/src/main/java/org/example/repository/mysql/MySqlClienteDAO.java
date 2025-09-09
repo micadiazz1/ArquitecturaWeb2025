@@ -5,7 +5,6 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.example.DAO.ClienteDAO;
 import org.example.entity.ClienteFactura;
-import org.example.factory.ConnectionManagerSingleton;
 
 import java.io.File;
 import java.io.FileReader;
@@ -33,7 +32,7 @@ public class MySqlClienteDAO implements ClienteDAO {
     /** Ruta al archivo CSV con datos de clientes
      *  Esto se debe arreglar, el CSVReader por alguna razon no reconoce el path.
      * */
-    private final String csvPath = "Integrador1/src/main/java/org/example/utils/clientes.csv";
+    private final String csvPath = "src/main/java/org/example/utils/clientes.csv";
 
     /**
      * Constructor de clase.
@@ -80,21 +79,17 @@ public class MySqlClienteDAO implements ClienteDAO {
      * @throws RuntimeException si ocurre un error de SQL, I/O o formato de datos
      */
     @Override
-    public void insertCliente() {
+    public void insertCliente(CSVParser elementos) {
         File csvFile = new File(csvPath);
         System.out.println("Buscando archivo CSV en: " + csvFile.getAbsolutePath());
         System.out.println("El archivo existe: " + csvFile.exists());
         System.out.println("Es readable: " + csvFile.canRead());
 
-        if (!csvFile.exists()) {
-            System.err.println("ERROR: El archivo CSV no existe en la ruta especificada");
-            System.err.println("Ruta esperada: " + csvFile.getAbsolutePath());
-            return;
-        }
 
-        try (FileReader reader = new FileReader(csvFile);
-             CSVParser parser = CSVFormat.DEFAULT.withHeader().parse(reader);
-             PreparedStatement statement = conn.prepareStatement(
+
+        try (
+                CSVParser parser = ManagerCSV.getInstance().getRecords(csvPath);
+                PreparedStatement statement = conn.prepareStatement(
                      "INSERT INTO Cliente (idCliente, nombre, email) VALUES (?, ?, ?)")) {
 
             conn.setAutoCommit(false);
