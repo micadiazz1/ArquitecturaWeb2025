@@ -8,6 +8,7 @@ import org.example.entity.*;
 
 import org.example.factory.ConnectionManagerSingleton;
 import org.example.factory.CsvLoader;
+import org.example.factory.DAOFactory;
 import org.example.repository.MySqlDAOFactory;
 import org.example.repository.TableCreator;
 
@@ -17,11 +18,12 @@ import java.util.List;
 
 
 public class Main {
-    private static final MySqlDAOFactory DAOFactoryMySQL = new MySqlDAOFactory();
-    private static final ClienteDAO clienteDAO = DAOFactoryMySQL.getClienteDAO();
-    private static final FacturaDAO facturaDAO = DAOFactoryMySQL.getFacturaDAO();
-    private static final FacturaProductoDAO facturaProductoDAO = DAOFactoryMySQL.getFacturaProductoDAO();
-    private static final ProductoDAO productoDAO = DAOFactoryMySQL.getProductDAO();
+    //obtener instancia de acuerdo a que base de datos se use, en este caso mySql(1)
+    private static final  DAOFactory mysqlFactory = DAOFactory.getInstance(1);
+    private static final ClienteDAO clienteDAO = mysqlFactory.getClienteDAO();
+    private static final FacturaDAO facturaDAO = mysqlFactory.getFacturaDAO();
+    private static final FacturaProductoDAO facturaProductoDAO = mysqlFactory.getFacturaProductoDAO();
+    private static final ProductoDAO productoDAO = mysqlFactory.getProductDAO();
 
     public static void main(String[] args) {
         // 1. Crear las tablas
