@@ -11,26 +11,29 @@ import org.example.repository.mysql.MySqlFacturaDAO;
 import org.example.repository.mysql.MySqlFacturaProductoDAO;
 import org.example.repository.mysql.MySqlProductoDAO;
 
-public class MySqlDAOFactory extends DAOFactory {
+import java.sql.Connection;
 
+public class MySqlDAOFactory extends DAOFactory {
 
     @Override
     public ProductoDAO getProductDAO() {
-        return MySqlProductoDAO.getInstance(ConnectionManagerSingleton.getInstance().getConnection());
+        return new MySqlProductoDAO(ConnectionManagerSingleton.getInstance().getConnection());
     }
 
     @Override
     public ClienteDAO getClienteDAO() {
-        return MySqlClienteDAO.getInstance(ConnectionManagerSingleton.getInstance().getConnection());
+
+        return new MySqlClienteDAO(ConnectionManagerSingleton.getInstance().getConnection());
     }
 
     @Override
     public FacturaProductoDAO getFacturaProductoDAO() {
-        return MySqlFacturaProductoDAO.getInstance(ConnectionManagerSingleton.getInstance().getConnection());
+
+        return new MySqlFacturaProductoDAO(ConnectionManagerSingleton.getInstance().getConnection());
     }
 
     @Override
     public FacturaDAO getFacturaDAO() {
-        return MySqlFacturaDAO.getInstance(ConnectionManagerSingleton.getInstance().getConnection());
+        return new MySqlFacturaDAO(ConnectionManagerSingleton.getInstance().getConnection());
     }
 }

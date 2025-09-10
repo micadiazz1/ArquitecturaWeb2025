@@ -1,14 +1,23 @@
 package org.example;
 
-import org.example.entity.ClienteFactura;
-import org.example.entity.TopProducto;
-import org.example.repository.*;
-import org.example.DAO.*;
+import org.example.DAO.ClienteDAO;
+import org.example.DAO.FacturaDAO;
+import org.example.DAO.FacturaProductoDAO;
+import org.example.DAO.ProductoDAO;
+import org.example.entity.*;
 
-import java.io.FileNotFoundException;
+import org.example.factory.ConnectionManagerSingleton;
+import org.example.factory.CsvLoader;
+import org.example.repository.MySqlDAOFactory;
+import org.example.repository.TableCreator;
+
+import java.io.IOException;
 import java.util.List;
 
+
+
 public class Main {
+
     private static final MySqlDAOFactory DAOFactoryMySQL = new MySqlDAOFactory();
     private static final ClienteDAO clienteDAO = DAOFactoryMySQL.getClienteDAO();
     private static final FacturaDAO facturaDAO = DAOFactoryMySQL.getFacturaDAO();
@@ -16,58 +25,72 @@ public class Main {
     private static final ProductoDAO productoDAO = DAOFactoryMySQL.getProductDAO();
 
     public static void main(String[] args) {
-        //crear tablas
-        //crearTablas();
+        // 1. Crear las tablas
+        crearTablas();
 
-        //llenar tablas con datos
-        //falta arreglar el tema de que no reconoce las rutas de los archivos .csv
-        //llenarTablas();
+        // 2. Llenar tablas con datos
+        llenarTablas();
 
-        //Obtener el top producto
+        // 3. Obtener el top producto
         TopProducto topProducto = productoDAO.getTopProduct();
+        System.out.println("\n--- Top producto ---");
         System.out.println(topProducto);
 
-        //Obtener lista de clientes segun recaudación
-        List<ClienteFactura> clientes = clienteDAO.getListClientByBilling();
+        // 4. Obtener lista de clientes según recaudación
+        List<ClienteFactura> clientes = clienteDAO.getClientsSortedByTotalBilling();
+        System.out.println("\n--- Clientes ordenados por facturación ---");
         for (ClienteFactura cliente : clientes) {
             System.out.println(cliente);
         }
-    }
-    public static void crearTablas(){
-        clienteDAO.createTable();
-        facturaDAO.createTable();
-        productoDAO.createTable();
-        facturaProductoDAO.createTable();
+
+        // Cierra la conexión al final del programa
+        ConnectionManagerSingleton.getInstance().closeConnection();
     }
 
-    public static void llenarTablas(){
-        /*try {
-            clienteDAO.insertCliente();
+    public static void crearTablas() {
+        System.out.println("Creando esquema de la base de datos...");
+        TableCreator tableCreator = new TableCreator(ConnectionManagerSingleton.getInstance().getConnection());
+        tableCreator.createAllTables();
+    }
 
-        } catch (FileNotFoundException e) {
-            System.out.println("Error al insertar los clientes en tabla");
-            throw new RuntimeException(e);
-        }*/
-
-        /*try {
-            productoDAO.insertProducto();
-        } catch (Exception e){
-            System.out.println("Error al insertar los productos en tabla");
-            throw new RuntimeException(e);
-        }
+    public static void llenarTablas() {
+        CsvLoader<Cliente> clienteLoader = new CsvLoader<>();
+        CsvLoader<Producto> productoLoader = new CsvLoader<>();
+        CsvLoader<Factura> facturaLoader = new CsvLoader<>();
+        CsvLoader<FacturaProducto> facturaProductoLoader = new CsvLoader<>();
 
         try {
-            facturaDAO.insertFactura();
-        } catch (Exception e){
-            System.out.println("Error al insertar las facturas  en tabla");
-            throw new RuntimeException(e);
-        }*/
+            // Cargar clientes
+            clienteLoader.loadAndInsert("clientes.csv", clienteDAO, record -> new Cliente(
+                    Integer.parseInt(record.get("idCliente")),
+                    record.get("nombre"),
+                    record.get("email")
+            ));
 
-        try {
-            facturaProductoDAO.insertFacturaProducto();
-        } catch (Exception e){
-            System.out.println("Error al insertar las facturas  en tabla");
-            throw new RuntimeException(e);
+            // Cargar productos
+            productoLoader.loadAndInsert("productos.csv", productoDAO, record -> new Producto(
+                    Integer.parseInt(record.get("idProducto")),
+                    record.get("nombre"),
+                    Float.parseFloat(record.get("valor"))
+            ));
+
+            // Cargar facturas
+            facturaLoader.loadAndInsert("facturas.csv", facturaDAO, record -> new Factura(
+                    Integer.parseInt(record.get("idFactura")),
+                    Integer.parseInt(record.get("idCliente"))
+            ));
+
+            // Cargar factura_producto
+            facturaProductoLoader.loadAndInsert("facturasProductos.csv", facturaProductoDAO, record -> new FacturaProducto(
+                    Integer.parseInt(record.get("idFactura")),
+                    Integer.parseInt(record.get("idProducto")),
+                    Integer.parseInt(record.get("cantidad"))
+            ));
+
+        } catch (IOException e) {
+            System.err.println("Error al cargar los archivos CSV: " + e.getMessage());
         }
     }
 }
+
+
