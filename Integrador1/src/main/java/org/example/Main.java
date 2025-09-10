@@ -17,7 +17,6 @@ import java.util.List;
 
 
 public class Main {
-
     private static final MySqlDAOFactory DAOFactoryMySQL = new MySqlDAOFactory();
     private static final ClienteDAO clienteDAO = DAOFactoryMySQL.getClienteDAO();
     private static final FacturaDAO facturaDAO = DAOFactoryMySQL.getFacturaDAO();

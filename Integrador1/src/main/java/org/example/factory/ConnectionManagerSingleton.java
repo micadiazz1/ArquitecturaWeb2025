@@ -11,7 +11,7 @@ public class ConnectionManagerSingleton {
         try {
             String url = "jdbc:mysql://localhost:3306/arquitp1";
             String user = "root";
-            String password = "";
+            String password = "123";
             conn = DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
             e.printStackTrace();
