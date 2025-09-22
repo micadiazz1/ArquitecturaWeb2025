@@ -11,6 +11,10 @@ public class Producto {
         this.valor = valor;
     }
 
+    public Producto() {
+
+    }
+
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }

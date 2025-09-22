@@ -1,67 +1,57 @@
 package org.example.repository.mysql;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.example.DAO.FacturaDAO;
 
-import java.io.FileReader;
+import org.example.DAO.FacturaDAO;
+import org.example.entity.Factura;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLSyntaxErrorException;
+import java.sql.SQLException;
+import java.util.List;
 
 public class MySqlFacturaDAO implements FacturaDAO {
 
-    private  final Connection connection;
+    /** Conexión activa con la base de datos MySQL */
+    private final Connection connection;
 
+    /**
+     * Constructor de clase.
+     *
+     * @param connection conexión a la base de datos MySQL
+     */
     public MySqlFacturaDAO(Connection connection) {
         this.connection = connection;
     }
 
+    /**
+     * Inserta una lista de facturas en la base de datos.
+     * <p>
+     * El proceso se ejecuta dentro de una transacción y utiliza batch processing.
+     *
+     * @param facturas lista de objetos Factura a insertar.
+     */
     @Override
-    public void createTable() {
-        String createFacturaTable = "CREATE TABLE Factura (" +
-                "idFactura INT PRIMARY KEY AUTO_INCREMENT," +
-                "idCliente INT," +
-                "FOREIGN KEY (idCliente) REFERENCES Cliente(idCliente)" +
-                ")";
-        try(PreparedStatement stmt = connection.prepareStatement(createFacturaTable)) {
-            stmt.executeUpdate();
-        } catch (SQLSyntaxErrorException e){
-            System.out.println("Ya existe la tabla Factura");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-    @Override
-    public void insertFactura() {
-
-        try {
-            CSVParser parser = CSVFormat.DEFAULT.withHeader().parse(new FileReader("src/main/java/org.example/utils/facturas.csv"));
-
-
-            String insert = "INSERT INTO Factura (idFactura,idCliente) VALUES (?,?)";
-            try(PreparedStatement statement = connection.prepareStatement(insert)) {
-                for(CSVRecord row: parser) {
-
-                    statement.setString(1,row.get("idFactura"));
-                    statement.setString(2,row.get("idCliente"));
-
-                    statement.executeUpdate();
-
-                }
-            } catch (SQLIntegrityConstraintViolationException e) {
-                System.out.println("La tabla Factura ya esta cargada");
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+    public void insertAll(List<Factura> facturas) {
+        String sql = "INSERT INTO factura (idFactura, idCliente) VALUES (?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            connection.setAutoCommit(false);
+            for (Factura factura : facturas) {
+                statement.setInt(1, factura.getIdFactura());
+                statement.setInt(2, factura.getIdCliente());
+                statement.addBatch();
             }
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            statement.executeBatch();
+            connection.commit();
+            connection.setAutoCommit(true);
+            System.out.println("Insertados " + facturas.size() + " registros en Factura.");
+        } catch (SQLException e) {
+            System.err.println("Error al insertar facturas en batch: " + e.getMessage());
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                System.err.println("Error al hacer rollback: " + ex.getMessage());
+            }
         }
-
     }
 }
+

@@ -1,61 +1,57 @@
 package org.example.repository.mysql;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 import org.example.DAO.FacturaProductoDAO;
 
-import java.io.FileReader;
+import org.example.entity.FacturaProducto;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLSyntaxErrorException;
+import java.sql.SQLException;
+import java.util.List;
 
 public class MySqlFacturaProductoDAO implements FacturaProductoDAO {
+
+    /** Conexión activa con la base de datos */
     private final Connection conn;
 
+    /**
+     * Constructor de clase.
+     * @param conn conexión a la base de datos MySQL
+     */
     public MySqlFacturaProductoDAO(Connection conn) {
         this.conn = conn;
     }
 
-    public void createTable() {
-        String createFacturaProductoTable = "CREATE TABLE Factura_Producto (" +
-                "idFactura INT," +
-                "idProducto INT," +
-                "cantidad INT," +
-                "PRIMARY KEY (idFactura, idProducto)," +
-                "FOREIGN KEY (idFactura) REFERENCES Factura(idFactura)," +
-                "FOREIGN KEY (idProducto) REFERENCES Producto(idProducto)" +
-                ")";
-        try(PreparedStatement statement = conn.prepareStatement(createFacturaProductoTable)) {
-            statement.executeUpdate();
-        } catch (SQLSyntaxErrorException e){
-            System.out.println("Ya existe la tabla Factura_Producto");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
+    /**
+     * Inserta una lista de relaciones factura-producto en la base de datos.
+     * <p>
+     * Utiliza procesamiento en lotes (batch) y transacciones para optimizar
+     * el rendimiento y garantizar la consistencia de los datos.
+     *
+     * @param facturasProductos lista de objetos FacturaProducto a insertar.
+     */
     @Override
-    public void insertFacturaProducto() {
-        try {
-            CSVParser parser = CSVFormat.DEFAULT.withHeader().parse(new FileReader("src/main/java/org.example/utils/facturas-productos.csv"));
-
-            String insert = "INSERT INTO Factura_Producto (idFactura,idProducto,cantidad) VALUES (?,?,?)";
-            PreparedStatement statement = conn.prepareStatement(insert);
-
-            for(CSVRecord row: parser) {
-
-                statement.setString(1,row.get("idFactura"));
-                statement.setString(2,row.get("idProducto"));
-                statement.setString(3,row.get("cantidad"));
-
-                statement.executeUpdate();
+    public void insertAll(List<FacturaProducto> facturasProductos) {
+        String sql = "INSERT INTO factura_producto (idFactura, idProducto, cantidad) VALUES (?, ?, ?)";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(false);
+            for (FacturaProducto fp : facturasProductos) {
+                statement.setInt(1, fp.getIdFactura());
+                statement.setInt(2, fp.getIdProducto());
+                statement.setInt(3, fp.getCantidad());
+                statement.addBatch();
             }
-        } catch (SQLIntegrityConstraintViolationException e) {
-            System.out.println("La tabla Factura-Producto ya esta cargada");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            statement.executeBatch();
+            conn.commit();
+            conn.setAutoCommit(true);
+            System.out.println("Insertados " + facturasProductos.size() + " registros en Factura_Producto.");
+        } catch (SQLException e) {
+            System.err.println("Error al insertar Factura-Producto en batch: " + e.getMessage());
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                System.err.println("Error al hacer rollback: " + ex.getMessage());
+            }
         }
     }
 }

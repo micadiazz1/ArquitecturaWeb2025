@@ -1,11 +1,14 @@
 package org.example.DAO;
 
+import org.example.entity.Producto;
+import org.example.entity.TopProducto;
+
+import java.util.List;
+
 public interface ProductoDAO {
 
-    void createTable();
+    void insertAll(List<Producto> productos);
 
-    void insertProducto();
-
-    void getTopProduct();
+    TopProducto getTopProduct();
 
 }
