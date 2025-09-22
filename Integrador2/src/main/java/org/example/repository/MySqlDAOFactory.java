@@ -1,7 +1,7 @@
 package org.example.repository;
 
-import org.example.repository.mysql.MySqlEstudianteDAO;
-import org.example.repository.mysql.MySqlInscripcionDAO;
+import org.example.repository.mysql.MySqlEstudianteRepository;
+import org.example.repository.mysql.MySqlInscripcionRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -22,11 +22,11 @@ public class MySqlDAOFactory {
         return instance == null ? instance = new MySqlDAOFactory() : instance;
     }
 
-    public MySqlEstudianteDAO getEstudianteDAO() {
-        return MySqlEstudianteDAO.getInstance(this.em);
+    public MySqlEstudianteRepository getEstudianteRepository() {
+        return MySqlEstudianteRepository.getInstance(this.em);
     }
 
-    public MySqlInscripcionDAO getInscripcionDAO() {
-        return MySqlInscripcionDAO.getInstance(this.em);
+    public MySqlInscripcionRepository getInscripcionRepository() {
+        return MySqlInscripcionRepository.getInstance(this.em);
     }
 }

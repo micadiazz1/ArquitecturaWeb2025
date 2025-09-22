@@ -25,13 +25,16 @@ public class Carrera {
     @Column(length = 250, nullable = false)
     private String nombreCarrera;
 
+    @Column(name = "anioDuracion")
+    private int duracion;
+
     @OneToMany(mappedBy = "carrera", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Inscripcion> inscripciones = new ArrayList<>();
 
-
-    public Carrera(int idCarrera, String nombreCarrera) {
+    public Carrera(int idCarrera, String nombreCarrera, int duracion) {
         this.idCarrera = idCarrera;
         this.nombreCarrera = nombreCarrera;
+        this.duracion = duracion;
     }
 
 

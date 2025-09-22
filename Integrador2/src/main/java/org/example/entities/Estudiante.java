@@ -35,30 +35,23 @@ public class Estudiante {
 
     @Column
     private int edad;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Ciudad ciudad;
+    @Enumerated(EnumType.STRING)
+    private Genero genero; //Masculino, Femenino
+    @Column
+    private String ciudad;
 
     @Column(unique = true)
     private int numLibreta;
-
     @OneToMany(mappedBy = "estudiante", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Inscripcion> inscripciones = new ArrayList<>();
 
-
-    @Column
-    private boolean graduado = false;
-
-    @Enumerated(EnumType.STRING)
-    private Genero genero; //Masculino, Femenino
-
-    public Estudiante(int numLibreta, Ciudad ciudad, int documento, int edad, String apellido, String nombre, Genero genero) {
-        this.numLibreta = numLibreta;
-        this.ciudad = ciudad;
+    public Estudiante(int documento, String nombre, String apellido, int edad, Genero genero, String ciudad, int numLibreta) {
         this.documento = documento;
-        this.edad = edad;
-        this.apellido = apellido;
         this.nombre = nombre;
+        this.apellido = apellido;
+        this.edad = edad;
         this.genero = genero;
+        this.ciudad = ciudad;
+        this.numLibreta = numLibreta;
     }
 }

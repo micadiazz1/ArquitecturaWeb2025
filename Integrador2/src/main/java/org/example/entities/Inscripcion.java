@@ -24,20 +24,21 @@ public class Inscripcion {
     private Carrera carrera;
 
     @Column
-    private int antiguedad; // en años, meses, etc.
-
-    @Column
     private Timestamp fechaInscripcion;
 
     @Column
     private Timestamp fechaGraduacion;
+    @Column
+    private int antiguedad; // en años, meses, etc.
 
-    public Inscripcion(Estudiante estudiante, Carrera carrera, Timestamp fechaInscripcion, Timestamp fechaGraduacion) {
+
+    public Inscripcion(int idInscripcion, Estudiante estudiante, Carrera carrera, Timestamp fechaInscripcion, Timestamp fechaGraduacion, int antiguedad) {
+        this.idInscripcion = idInscripcion;
         this.estudiante = estudiante;
         this.carrera = carrera;
-        this.antiguedad = 0;
         this.fechaInscripcion = fechaInscripcion;
         this.fechaGraduacion = fechaGraduacion;
+        this.antiguedad = antiguedad;
     }
 }
 

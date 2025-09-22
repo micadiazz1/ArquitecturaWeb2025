@@ -3,41 +3,31 @@ package org.example.repository.mysql;
 import org.example.DAO.InscripcionDAO;
 import org.example.DTO.ReporteCarrera;
 import org.example.entities.Carrera;
-import org.example.entities.Ciudad;
 import org.example.entities.Estudiante;
 import org.example.entities.Inscripcion;
 
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import java.util.List;
 
-public class MySqlInscripcionDAO implements InscripcionDAO {
+public class MySqlInscripcionRepository extends BaseJPARepository  {
 
-    private static volatile MySqlInscripcionDAO instance;
+    private static volatile MySqlInscripcionRepository instance;
     private EntityManager em;
 
-    private MySqlInscripcionDAO(EntityManager em) {
-        this.em = em;
+
+    public MySqlInscripcionRepository(EntityManager em) {
+        super(em, Inscripcion.class );
+    }
+    public static MySqlInscripcionRepository getInstance(EntityManager em) {
+        return instance == null ? instance = new MySqlInscripcionRepository(em) : instance;
     }
 
-    public static MySqlInscripcionDAO getInstance(EntityManager em) {
-        return instance == null ? instance = new MySqlInscripcionDAO(em) : instance;
-    }
 
-    /**
-     * b) matricular un estudiante en una carrera
-     * */
-    @Override
-    public void matricularEstudiante(Inscripcion insc) {
-        em.persist(insc);
-    }
-
-    /**
-     * g) recuperar los estudiantes de una determinada carrera, filtrado por ciudad de residencia
+    /* g) recuperar los estudiantes de una determinada carrera, filtrado por ciudad de residencia
      * */
 
-    @Override
-    public List<Estudiante> getEstudiantesByCarrera(Carrera carrera, Ciudad ciudad) {
+    public List<Estudiante> getEstudiantesByCarrera(Carrera carrera,String ciudad) {
         String query = "SELECT DISTINCT i.estudiante FROM Inscripcion i" +
                 " WHERE i.carrera = :carrera" +
                 " AND i.estudiante.ciudad = :ciudad";
@@ -64,7 +54,7 @@ public class MySqlInscripcionDAO implements InscripcionDAO {
      * <li> Recuperar los estudiantes de una determinada carrera, filtrado por ciudad de residencia </li>
      * */
 
-    @Override
+
     public List<Carrera> getCarrerasConInscriptos() {
         String query = "SELECT c, COUNT(i) AS total" +
                 " FROM Inscripcion i" +
@@ -113,7 +103,7 @@ public class MySqlInscripcionDAO implements InscripcionDAO {
      *
      * */
 
-    @Override
+
     public List<ReporteCarrera> generarReporteCarreras() {
         return List.of();
     }
