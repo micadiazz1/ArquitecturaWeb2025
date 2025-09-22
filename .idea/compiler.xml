@@ -6,8 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Integrador1" />
+        <module name="Integrador2" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Integrado2" target="24" />
+    </bytecodeTargetLevel>
   </component>
 </project>
