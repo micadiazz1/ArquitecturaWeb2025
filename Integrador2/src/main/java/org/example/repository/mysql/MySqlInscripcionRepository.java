@@ -1,6 +1,5 @@
 package org.example.repository.mysql;
 
-import org.example.DAO.InscripcionDAO;
 import org.example.DTO.ReporteCarrera;
 import org.example.entities.Carrera;
 import org.example.entities.Estudiante;
