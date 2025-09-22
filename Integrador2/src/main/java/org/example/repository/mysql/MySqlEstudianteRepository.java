@@ -1,6 +1,7 @@
 package org.example.repository.mysql;
 
 
+import org.example.DTO.EstudianteDTO;
 import org.example.entities.Estudiante;
 import org.example.utils.Genero;
 
@@ -23,16 +24,20 @@ public class MySqlEstudianteRepository extends BaseJPARepository<Estudiante> {
         }
         return instance;
     }
-    public Estudiante getEstudianteByLibreta(int numLibreta) {
+
+    /*TODO:
+    c) recuperar todos los estudiantes, y especificar algún criterio de ordenamiento simple.
+     */
+    public EstudianteDTO getEstudianteByLibreta(int numLibreta) {
         return getEntityManager()
-                .createQuery("SELECT e FROM Estudiante e WHERE e.numLibreta = :numLibreta", Estudiante.class)
+                .createQuery("SELECT new EstudianteDTO(e.nombre, e.apellido, e.documento, e.numLibreta) FROM Estudiante e WHERE e.numLibreta = :numLibreta", EstudianteDTO.class)
                 .setParameter("numLibreta", numLibreta)
                 .getSingleResult();
     }
 
 
-    public List<Estudiante> getEstudiantesByGenero(Genero genero) {
-        return getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.genero = :genero", Estudiante.class)
+    public List<EstudianteDTO> getEstudiantesByGenero(Genero genero) {
+        return getEntityManager().createQuery("SELECT new EstudianteDTO(e.nombre, e.apellido, e.documento, e.numLibreta) FROM Estudiante e WHERE e.genero = :genero", EstudianteDTO.class)
                 .setParameter("genero", genero)
                 .getResultList();
     }

@@ -20,7 +20,7 @@ import java.util.List;
         name = "Estudiante.findAllOrderByNombreApellido",
         query = "SELECT e FROM Estudiante e ORDER BY e.nombre, e.apellido ASC"
 )
-@Entity(name = "estudiante")
+@Entity
 public class Estudiante {
 
     @Id

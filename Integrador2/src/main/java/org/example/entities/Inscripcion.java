@@ -9,7 +9,6 @@ import java.sql.Timestamp;
 @Setter
 @ToString
 @NoArgsConstructor
-@AllArgsConstructor
 
 @Entity
 public class Inscripcion {

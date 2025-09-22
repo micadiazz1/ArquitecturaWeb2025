@@ -1,5 +1,7 @@
 package org.example.repository.mysql;
 
+import org.example.DTO.CarreraDTO;
+import org.example.DTO.EstudianteDTO;
 import org.example.DTO.ReporteCarrera;
 import org.example.entities.Carrera;
 import org.example.entities.Estudiante;
@@ -9,10 +11,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.util.List;
 
-public class MySqlInscripcionRepository extends BaseJPARepository  {
+public class MySqlInscripcionRepository extends BaseJPARepository<Inscripcion>  {
 
     private static volatile MySqlInscripcionRepository instance;
-    private EntityManager em;
 
 
     public MySqlInscripcionRepository(EntityManager em) {
@@ -26,16 +27,21 @@ public class MySqlInscripcionRepository extends BaseJPARepository  {
     /* g) recuperar los estudiantes de una determinada carrera, filtrado por ciudad de residencia
      * */
 
-    public List<Estudiante> getEstudiantesByCarrera(Carrera carrera,String ciudad) {
-        String query = "SELECT DISTINCT i.estudiante FROM Inscripcion i" +
-                " WHERE i.carrera = :carrera" +
-                " AND i.estudiante.ciudad = :ciudad";
+    public List<EstudianteDTO> getEstudiantesByCarrera(Carrera carrera, String ciudad) {
+        String query =
+                "SELECT DISTINCT new EstudianteDTO(" +
+                        "e.nombre, e.apellido, e.documento, e.numLibreta) " +
+                        "FROM Inscripcion i " +
+                        "JOIN i.estudiante e " +
+                        "WHERE i.carrera = :carrera " +
+                        "AND e.ciudad = :ciudad";
 
-        return em.createQuery(query, Estudiante.class)
+        return getEntityManager().createQuery(query, EstudianteDTO.class)
                 .setParameter("carrera", carrera)
                 .setParameter("ciudad", ciudad)
                 .getResultList();
     }
+
 
     /**
      *
@@ -54,14 +60,16 @@ public class MySqlInscripcionRepository extends BaseJPARepository  {
      * */
 
 
-    public List<Carrera> getCarrerasConInscriptos() {
-        String query = "SELECT c, COUNT(i) AS total" +
-                " FROM Inscripcion i" +
-                " JOIN i.carrera c" +
-                " GROUP BY c" +
-                " ORDER BY total DESC";
+    public List<CarreraDTO> getCarrerasConInscriptos() {
+        String query =
+                "SELECT new CarreraDTO(c.nombre, c.duracion, COUNT(i)) " +
+                        "FROM Inscripcion i " +
+                        "JOIN i.carrera c " +
+                        "GROUP BY c.nombre, c.duracion " +
+                        "ORDER BY COUNT(i) DESC";
 
-        return em.createQuery(query, Carrera.class).getResultList();
+        return getEntityManager().createQuery(query, CarreraDTO.class).getResultList();
+
     }
 
     /**
