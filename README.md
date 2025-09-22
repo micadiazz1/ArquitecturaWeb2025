@@ -14,7 +14,7 @@
 ---
 
 ## TODO
-- ~~ Transformar la devolucion de entidades en DTOs ~~
+- ~~Transformar la devolucion de entidades en DTOs~~
 - Eliminar la entidad Ciudad y fijarse en donde más se usa
 - Reemplazar todos los DAOs por repositorios
 - Terminar el punto 3)
