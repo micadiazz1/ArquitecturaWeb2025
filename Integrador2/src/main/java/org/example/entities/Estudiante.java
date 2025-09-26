@@ -1,31 +1,38 @@
 package org.example.entities;
 
-import lombok.*;
 import org.example.utils.Genero;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Table(name = "estudiante")
 @Getter
 @Setter
-@ToString
-@NoArgsConstructor
+@NoArgsConstructor // Genera el constructor sin argumentos, necesario para JPA.
+
 @NamedQuery(
         name = "Estudiante.findAll",
         query = "SELECT e FROM Estudiante e"
 )
-
 @NamedQuery(
         name = "Estudiante.findAllOrderByNombreApellido",
         query = "SELECT e FROM Estudiante e ORDER BY e.nombre, e.apellido ASC"
 )
-@Entity
+@NamedQuery(
+        name = "Estudiante.findByID",
+        query = "SELECT e FROM Estudiante e WHERE e.documento = :documento"
+)
 public class Estudiante {
 
-    @Id
-    @Column(name = "idEstudiante")
-    private int documento;
+    @Column(name = "num_libreta", unique = true, nullable = false)
+    private int numLibreta;
 
     @Column(length = 100)
     private String nombre;
@@ -35,23 +42,17 @@ public class Estudiante {
 
     @Column
     private int edad;
+
+    @Id
+    @Column(unique = true, nullable = false)
+    private int documento;
+
     @Enumerated(EnumType.STRING)
-    private Genero genero; //Masculino, Femenino
-    @Column
+    private Genero genero;
+
+    @Column(length = 100)
     private String ciudad;
 
-    @Column(unique = true)
-    private int numLibreta;
-    @OneToMany(mappedBy = "estudiante", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Inscripcion> inscripciones = new ArrayList<>();
-
-    public Estudiante(int documento, String nombre, String apellido, int edad, Genero genero, String ciudad, int numLibreta) {
-        this.documento = documento;
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.edad = edad;
-        this.genero = genero;
-        this.ciudad = ciudad;
-        this.numLibreta = numLibreta;
-    }
+    @OneToMany(mappedBy = "estudiante")
+    private Set<Inscripcion> inscripciones;
 }

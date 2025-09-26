@@ -15,10 +15,10 @@ public class MySqlInscripcionRepository extends BaseJPARepository<Inscripcion>  
 
     private static volatile MySqlInscripcionRepository instance;
 
-
     public MySqlInscripcionRepository(EntityManager em) {
         super(em, Inscripcion.class );
     }
+
     public static MySqlInscripcionRepository getInstance(EntityManager em) {
         return instance == null ? instance = new MySqlInscripcionRepository(em) : instance;
     }
