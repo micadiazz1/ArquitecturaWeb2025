@@ -1,5 +1,6 @@
 package org.example.repository;
 
+import lombok.Getter;
 import org.example.repository.mysql.MySqlEstudianteRepository;
 import org.example.repository.mysql.MySqlInscripcionRepository;
 
@@ -10,6 +11,7 @@ import javax.persistence.Persistence;
 public class MySqlDAOFactory {
 
     private EntityManagerFactory emf;
+    @Getter
     private EntityManager em;
     private static volatile MySqlDAOFactory instance;
 

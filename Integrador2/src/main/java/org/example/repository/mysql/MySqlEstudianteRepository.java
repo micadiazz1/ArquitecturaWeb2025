@@ -42,4 +42,12 @@ public class MySqlEstudianteRepository extends BaseJPARepository<Estudiante> {
                 .getResultList();
     }
 
+    public List<EstudianteDTO> findAllOrderedByApellidoAndNombre() {
+        String jpql = "SELECT new org.example.DTO.EstudianteDTO(e.nombre, e.apellido, e.documento, e.numLibreta) "
+                + "FROM Estudiante e ORDER BY e.apellido ASC, e.nombre ASC";
+
+        return getEntityManager().createQuery(jpql, EstudianteDTO.class)
+                .getResultList();
+    }
+
 }

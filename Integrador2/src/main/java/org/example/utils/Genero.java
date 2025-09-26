@@ -1,6 +1,13 @@
 package org.example.utils;
 
 public enum Genero {
-    MASCULINO,
-    FEMENINO
+    MALE,
+    FEMALE,
+    POLYGENDER,
+    AGENDER,
+    NON_BINARY,
+    GENDERFLUID,
+    BIGENDER,
+    DESCONOCIDO
+
 }

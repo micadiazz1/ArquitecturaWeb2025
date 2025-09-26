@@ -7,17 +7,16 @@
 
     <persistence-unit name="ArquiWebTp2" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-
         <class>org.example.entities.Estudiante</class>
         <class>org.example.entities.Carrera</class>
-        <class>org.example.entities.Ciudad</class>
         <class>org.example.entities.Inscripcion</class>
         <!-- Agrega aquí todas tus entidades -->
 
         <properties>
+
             <!-- Configuración de conexión -->
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/mi_basedatos?useSSL=false&amp;serverTimezone=UTC"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/arquitp2?useSSL=false&amp;serverTimezone=UTC"/>
             <property name="jakarta.persistence.jdbc.user" value="root"/>
             <property name="jakarta.persistence.jdbc.password" value=""/>
 
