@@ -30,14 +30,14 @@ public class MySqlEstudianteRepository extends BaseJPARepository<Estudiante> {
      */
     public EstudianteDTO getEstudianteByLibreta(int numLibreta) {
         return getEntityManager()
-                .createQuery("SELECT new EstudianteDTO(e.nombre, e.apellido, e.documento, e.numLibreta) FROM Estudiante e WHERE e.numLibreta = :numLibreta", EstudianteDTO.class)
+                .createQuery("SELECT new org.example.DTO.EstudianteDTO(e.nombre, e.apellido, e.documento, e.numLibreta) FROM Estudiante e WHERE e.numLibreta = :numLibreta", EstudianteDTO.class)
                 .setParameter("numLibreta", numLibreta)
                 .getSingleResult();
     }
 
 
     public List<EstudianteDTO> getEstudiantesByGenero(Genero genero) {
-        return getEntityManager().createQuery("SELECT new EstudianteDTO(e.nombre, e.apellido, e.documento, e.numLibreta) FROM Estudiante e WHERE e.genero = :genero", EstudianteDTO.class)
+        return getEntityManager().createQuery("SELECT new org.example.DTO.EstudianteDTO(e.nombre, e.apellido, e.documento, e.numLibreta) FROM Estudiante e WHERE e.genero = :genero", EstudianteDTO.class)
                 .setParameter("genero", genero)
                 .getResultList();
     }

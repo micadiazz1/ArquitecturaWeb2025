@@ -47,8 +47,8 @@ public class EstudianteService {
             Estudiante e = new Estudiante();
 
             // 1. Mapeo de los 4 campos obligatorios de entrada (vienen del DTO) criterio?
-            e.setDocumento(Integer.parseInt(dto.dni()));
-            e.setNumLibreta(Integer.parseInt(dto.numLibreta()));
+            e.setDocumento(dto.dni());
+            e.setNumLibreta(dto.numLibreta());
             e.setNombre(dto.nombre());
             e.setApellido(dto.apellido());
 

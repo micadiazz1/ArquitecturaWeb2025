@@ -2,13 +2,16 @@ package org.example.repository.mysql;
 
 import org.example.DTO.CarreraDTO;
 import org.example.DTO.EstudianteDTO;
-import org.example.DTO.ReporteCarrera;
+import org.example.DTO.ReporteCarreraDTO;
 import org.example.entities.Carrera;
 import org.example.entities.Estudiante;
 import org.example.entities.Inscripcion;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class MySqlInscripcionRepository extends BaseJPARepository<Inscripcion>  {
@@ -29,7 +32,7 @@ public class MySqlInscripcionRepository extends BaseJPARepository<Inscripcion>  
 
     public List<EstudianteDTO> getEstudiantesByCarrera(Carrera carrera, String ciudad) {
         String query =
-                "SELECT DISTINCT new EstudianteDTO(" +
+                "SELECT DISTINCT new org.example.DTO.EstudianteDTO(" +
                         "e.nombre, e.apellido, e.documento, e.numLibreta) " +
                         "FROM Inscripcion i " +
                         "JOIN i.estudiante e " +
@@ -62,7 +65,7 @@ public class MySqlInscripcionRepository extends BaseJPARepository<Inscripcion>  
 
     public List<CarreraDTO> getCarrerasConInscriptos() {
         String query =
-                "SELECT new CarreraDTO(c.nombre, c.duracion, COUNT(i)) " +
+                "SELECT new org.example.DTO.CarreraDTO(c.nombre, c.duracion, COUNT(i)) " +
                         "FROM Inscripcion i " +
                         "JOIN i.carrera c " +
                         "GROUP BY c.nombre, c.duracion " +
@@ -77,41 +80,34 @@ public class MySqlInscripcionRepository extends BaseJPARepository<Inscripcion>  
      * inscriptos y egresados por año. Se deben ordenar las carreras alfabéticamente, y presentar
      * los años de manera cronológica.
      *
-     * <p>
-     *  <li> Esto te da, por carrera y año, la cantidad de inscriptos:
-     *      <strong> </br>
-     *      SELECT c.nombreCarrera, YEAR(i.fechaInscripcion), COUNT(i.estudiante) </br>
-     *      FROM Inscripcion i </br>
-     *      JOIN i.carrera c </br>
-     *      GROUP BY c.nombreCarrera, YEAR(i.fechaInscripcion) </br>
-     *      ORDER BY c.nombreCarrera ASC, YEAR(i.fechaInscripcion) ASC </br>
-     *      </strong>
-     *  </li>
-     *
-     *
-     *
-     *
-     *
-     *  <li>Trae los graduados por carrera y año:
-     *      <strong> </br>
-     *          SELECT c.nombreCarrera, YEAR(e.fechaGraduacion), COUNT(e) </br>
-     *          FROM Estudiante e </br>
-     *          JOIN e.inscripciones i </br>
-     *          JOIN i.carrera c </br>
-     *          WHERE e.graduado = true </br>
-     *          GROUP BY c.nombreCarrera, YEAR(e.fechaGraduacion) </br>
-     *          ORDER BY c.nombreCarrera ASC, YEAR(e.fechaGraduacion) ASC </br>
-     *      </strong>
-     *  </li>
-     *
-     * </p>
-     *
      * TODO - Terminar la funcion del reporte de carreras
      *
      * */
 
+    public List<ReporteCarreraDTO> generarReporteCarreras() {
 
-    public List<ReporteCarrera> generarReporteCarreras() {
-        return List.of();
+        String query =
+                "SELECT new org.example.DTO.ReporteCarreraDTO(" +
+                        "   c.nombre, " +
+                        "   YEAR(i.fechaInscripcion), " +
+                        "   COUNT(i), " +
+                        "   SUM(CASE WHEN i.fechaGraduacion <> :fechaDefault THEN 1 ELSE 0 END)" +
+                        ") " +
+                        "FROM Inscripcion i " +
+                        "JOIN i.carrera c " +
+                        "GROUP BY c.nombre, YEAR(i.fechaInscripcion) " +
+                        "ORDER BY c.nombre ASC, YEAR(i.fechaInscripcion) ASC";
+
+        // Crear Date compatible
+        Calendar cal = Calendar.getInstance();
+        cal.set(1, Calendar.JANUARY, 1, 3, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date fechaDefault = cal.getTime();
+
+        return getEntityManager()
+                .createQuery(query, ReporteCarreraDTO.class)
+                .setParameter("fechaDefault", fechaDefault)
+                .getResultList();
     }
+
 }
