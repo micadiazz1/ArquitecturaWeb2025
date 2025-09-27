@@ -1,7 +1,10 @@
 package org.example.DAO;
 
+import org.example.entity.Factura;
+
+import java.util.List;
+
 public interface FacturaDAO {
 
-    void createTable();
-    void insertFactura();
+    void insertAll(List<Factura> facturas);
 }

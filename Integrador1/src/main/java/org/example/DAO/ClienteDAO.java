@@ -9,9 +9,7 @@ import java.io.FileNotFoundException;
 
 public interface ClienteDAO {
 
-    void createTable();
+    void insertAll(List<Cliente> clientes);
 
-    void insertCliente() throws FileNotFoundException;
-
-    List<ClienteFactura> getListClientByBilling();
+    List<ClienteFactura> getClientsSortedByTotalBilling();
 }
