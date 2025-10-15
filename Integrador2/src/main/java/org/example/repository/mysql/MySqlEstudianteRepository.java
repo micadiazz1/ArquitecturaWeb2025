@@ -1,4 +1,4 @@
-package org.example.repository.mysql;
+    package org.example.repository.mysql;
 
 
 import org.example.DTO.EstudianteDTO;
@@ -43,7 +43,7 @@ public class MySqlEstudianteRepository extends BaseJPARepository<Estudiante> {
     }
 
     public List<EstudianteDTO> findAllOrderedByApellidoAndNombre() {
-        String jpql = "SELECT new org.example.DTO.EstudianteDTO(e.nombre, e.apellido, e.documento, e.numLibreta) "
+        String jpql = "SELECT new org.example.service.dto.EstudianteDTO(e.nombre, e.apellido, e.documento, e.numLibreta) "
                 + "FROM Estudiante e ORDER BY e.apellido ASC, e.nombre ASC";
 
         return getEntityManager().createQuery(jpql, EstudianteDTO.class)
