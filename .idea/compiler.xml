@@ -8,7 +8,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="Integrador1" />
+        <module name="TP2-ArquiWeb (2)" />
         <module name="Integrador2" />
+        <module name="TP2-ArquiWeb (1)" />
         <module name="TP2-ArquiWeb" />
       </profile>
     </annotationProcessing>

@@ -17,19 +17,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EstudianteController {
     private final EstudianteService estudianteService;
-    @GetMapping("")
+
+    @GetMapping
     public List<EstudianteResponseDTO> getEstudiantes(){
         return this.estudianteService.findAll();
     }
+
     @GetMapping("/ordered")
     public List<EstudianteResponseDTO> getOrderedEstudiantes(){
         return this.estudianteService.findAllOrderedByApellidoAndNombre();
     }
-    @PostMapping("")
+    //No es necesario mandarle ("")
+    //La ruta sigue siendo /api/estudiantes
+    @PostMapping
     public ResponseEntity<EstudianteResponseDTO>saveEstudiante(@RequestBody EstudianteRequestDTO estudiante){
         final var result=this.estudianteService.save(estudiante);
         return ResponseEntity.accepted().body(result);
-
     }
 
 
