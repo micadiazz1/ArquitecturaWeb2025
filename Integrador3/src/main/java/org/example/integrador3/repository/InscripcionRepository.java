@@ -38,7 +38,7 @@ public interface InscripcionRepository extends JpaRepository<Inscripcion, Long> 
     );
 
     @Query("SELECT new org.example.integrador3.service.dto.carrera.response.CarreraResponseDTO(" +
-            "c.id) FROM Carrera c WHERE c.idCarrera = :idCarrera")
+            "c) FROM Carrera c WHERE c.id = :idCarrera")
     CarreraResponseDTO findCarreraById(
             @Param("idCarrera") Long idCarrera
     );

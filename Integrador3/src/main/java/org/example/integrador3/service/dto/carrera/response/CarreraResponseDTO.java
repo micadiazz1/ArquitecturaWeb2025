@@ -1,5 +1,6 @@
 package org.example.integrador3.service.dto.carrera.response;
 
+import org.example.integrador3.domain.Carrera;
 import org.example.integrador3.domain.Inscripcion;
 import org.example.integrador3.service.dto.carrera.request.CarreraRequestDTO;
 
@@ -11,7 +12,7 @@ public record CarreraResponseDTO(
         int duracion
 ) {
 
-    public CarreraResponseDTO(CarreraRequestDTO c){
+    public CarreraResponseDTO(Carrera c){
         this(
             c.getId(),
             c.getNombre(),
