@@ -13,7 +13,7 @@ public class EstudianteRequestDTO{
     private String apellido;
     private int edad;
     private int documento;
-    private String genero;
+    private Genero genero;
     private String ciudad;
 
 }

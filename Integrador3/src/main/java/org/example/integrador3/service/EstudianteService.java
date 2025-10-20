@@ -52,7 +52,7 @@ public class EstudianteService {
     /**
      * e) recuperar todos los estudiantes, en base a su género.
      * */
-    public List<EstudianteResponseDTO> findByGenero(String genero){
+    public List<EstudianteResponseDTO> findByGenero(Genero genero){
         return this.estudianteRepository.findByGenero(genero);
     }
 

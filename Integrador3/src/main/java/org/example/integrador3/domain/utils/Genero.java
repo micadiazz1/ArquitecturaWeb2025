@@ -8,5 +8,5 @@ public enum Genero {
     NON_BINARY,
     GENDERFLUID,
     BIGENDER,
-    DESCONOCIDO
+    DESCONOCIDO,
 }

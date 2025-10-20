@@ -41,7 +41,7 @@ public class DataInitService {
                 estudiante.setNombre(record.get("nombre"));
                 estudiante.setApellido(record.get("apellido"));
                 estudiante.setEdad(Integer.parseInt(record.get("edad")));
-                estudiante.setGenero(String.valueOf(record.get("genero").toLowerCase()));
+                estudiante.setGenero(Genero.valueOf(record.get("genero").toUpperCase().replace("-", "_")));
                 estudiante.setCiudad(record.get("ciudad"));
                 estudiante.setNumLibreta(Integer.parseInt(record.get("LU")));
                 return estudiante;

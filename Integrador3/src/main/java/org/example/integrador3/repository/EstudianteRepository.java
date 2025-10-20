@@ -18,7 +18,7 @@ public interface EstudianteRepository extends JpaRepository<Estudiante, Long> {
 
     @Query("SELECT new org.example.integrador3.service.dto.estudiante.response.EstudianteResponseDTO(e.nombre, e.apellido, e.documento, e.numLibreta) " +
             "FROM Estudiante e WHERE e.genero = :genero")
-    List<EstudianteResponseDTO> findByGenero(String genero);
+    List<EstudianteResponseDTO> findByGenero(Genero genero);
 
     @Query("SELECT new org.example.integrador3.service.dto.estudiante.response.EstudianteResponseDTO(e.nombre, e.apellido, e.documento, e.numLibreta) " +
             "FROM Estudiante e ORDER BY e.apellido ASC, e.nombre ASC")
