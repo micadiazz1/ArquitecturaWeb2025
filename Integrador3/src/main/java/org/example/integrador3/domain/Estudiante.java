@@ -25,7 +25,7 @@ public class Estudiante {
     private int edad;
     @Id
     private long documento;
-    private Genero genero;
+    private String genero;
     private String ciudad;
     @OneToMany(mappedBy = "estudiante")
     private Set<Inscripcion> inscripciones;

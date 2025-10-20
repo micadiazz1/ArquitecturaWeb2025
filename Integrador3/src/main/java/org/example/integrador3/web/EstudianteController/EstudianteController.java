@@ -40,7 +40,7 @@ public class EstudianteController {
         return this.estudianteService.getEstudianteByNumLibreta(numLibreta);
     }
     @GetMapping("/genero/{genero}")
-    public List<EstudianteResponseDTO> getEstudiantesByGenero(@PathVariable Genero genero){
+    public List<EstudianteResponseDTO> getEstudiantesByGenero(@PathVariable String genero){
         return this.estudianteService.findByGenero(genero);
     }
 
