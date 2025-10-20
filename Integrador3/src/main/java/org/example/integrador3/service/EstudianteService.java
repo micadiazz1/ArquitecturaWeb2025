@@ -25,7 +25,7 @@ public class EstudianteService {
     public EstudianteResponseDTO save(EstudianteRequestDTO req) { //DTO especifico para requests con todos los params
         final var estudiante  = new Estudiante(req);
         final var result= estudianteRepository.save(estudiante);
-        return new EstudianteResponseDTO(result.getNombre(), result.getApellido(), result.getDocumento(), result.getNumLibreta());
+        return new EstudianteResponseDTO(result.getNombre(), result.getApellido(), result.getDocumento(), result.getNumLibreta(), result.getCiudad());
     }
 
     /**

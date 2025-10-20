@@ -4,6 +4,7 @@ import org.example.integrador3.domain.Carrera;
 import org.example.integrador3.domain.Inscripcion;
 import org.example.integrador3.service.dto.carrera.response.CarreraResponseDTO;
 import org.example.integrador3.service.dto.estudiante.response.EstudianteResponseDTO;
+import org.example.integrador3.service.dto.reporte.CarreraReporteDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -35,4 +36,25 @@ public interface InscripcionRepository extends JpaRepository<Inscripcion, Long> 
             @Param("idCarrera") Long idCarrera,
             @Param("ciudad") String ciudad
     );
+
+    @Query("SELECT new org.example.integrador3.service.dto.carrera.response.CarreraResponseDTO(" +
+            "c.id) FROM Carrera c WHERE c.idCarrera = :idCarrera")
+    CarreraResponseDTO findCarreraById(
+            @Param("idCarrera") Long idCarrera
+    );
+
+    @Query("""
+    SELECT new org.example.integrador3.service.dto.reporte.CarreraReporteDTO(
+        c.nombre,
+        EXTRACT(YEAR FROM i.fechaInscripcion),
+        COUNT(i),
+        SUM(CASE WHEN i.fechaGraduacion IS NOT NULL THEN 1 ELSE 0 END)
+    )
+    FROM Inscripcion i
+    JOIN i.carrera c
+    GROUP BY c.nombre, EXTRACT(YEAR FROM i.fechaInscripcion)
+    ORDER BY c.nombre ASC, EXTRACT(YEAR FROM i.fechaInscripcion) ASC
+""")
+    List<CarreraReporteDTO> generarReporteCarreras();
+
 }

@@ -3,11 +3,13 @@ package org.example.integrador3.service;
 import jakarta.transaction.Transactional;
 import org.example.integrador3.domain.Carrera;
 import org.example.integrador3.domain.Inscripcion;
+import org.example.integrador3.repository.EstudianteRepository;
 import org.example.integrador3.repository.InscripcionRepository;
 import org.example.integrador3.service.dto.carrera.response.CarreraResponseDTO;
 import org.example.integrador3.service.dto.inscripcion.request.InscripcionRequestDTO;
 import org.example.integrador3.service.dto.estudiante.response.EstudianteResponseDTO;
 import org.example.integrador3.service.dto.inscripcion.response.InscripcionResponseDTO;
+import org.example.integrador3.service.dto.reporte.CarreraReporteDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +22,9 @@ public class InscripcionService {
     private final InscripcionRepository inscripcionRepository;
 
     @Autowired
-    public InscripcionService(InscripcionRepository inscripcionRepository) {
+    public InscripcionService(
+            InscripcionRepository inscripcionRepository
+    ) {
         this.inscripcionRepository = inscripcionRepository;
     }
 
@@ -87,5 +91,9 @@ public class InscripcionService {
         }
 
         return this.inscripcionRepository.findEstudiantesByCarrera(idCarrera, ciudad);
+    }
+
+    public List<CarreraReporteDTO> generarReporteCarreras(){
+        return this.inscripcionRepository.generarReporteCarreras();
     }
 }
