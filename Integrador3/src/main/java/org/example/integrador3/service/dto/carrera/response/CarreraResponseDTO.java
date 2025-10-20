@@ -8,16 +8,14 @@ import java.util.Set;
 public record CarreraResponseDTO(
         int id,
         String nombre,
-        int duracion,
-        Set<Inscripcion>inscripciones
+        int duracion
 ) {
 
     public CarreraResponseDTO(CarreraRequestDTO c){
         this(
             c.getId(),
             c.getNombre(),
-            c.getDuracion(),
-            c.getInscripciones()
+            c.getDuracion()
         );
     }
 }

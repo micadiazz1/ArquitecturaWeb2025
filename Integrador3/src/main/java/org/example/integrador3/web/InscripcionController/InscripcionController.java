@@ -6,6 +6,7 @@ import org.example.integrador3.service.dto.carrera.response.CarreraResponseDTO;
 import org.example.integrador3.service.dto.inscripcion.request.InscripcionRequestDTO;
 import org.example.integrador3.service.dto.estudiante.response.EstudianteResponseDTO;
 import org.example.integrador3.service.dto.inscripcion.response.InscripcionResponseDTO;
+import org.example.integrador3.service.dto.reporte.CarreraReporteDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.example.integrador3.service.InscripcionService;
@@ -47,5 +48,10 @@ public class InscripcionController {
     @GetMapping("/carreras/inscriptos")
     public ResponseEntity<List<CarreraResponseDTO>> findCarrerasByInscriptos() {
         return ResponseEntity.ok(this.inscripcionService.findCarrerasByInscriptos());
+    }
+
+    @GetMapping("/carreras/reporte")
+    public ResponseEntity<List<CarreraReporteDTO>> generarReporteCarreras() {
+        return ResponseEntity.ok(this.inscripcionService.generarReporteCarreras());
     }
 }
