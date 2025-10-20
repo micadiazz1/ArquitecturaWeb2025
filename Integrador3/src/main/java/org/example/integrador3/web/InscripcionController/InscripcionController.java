@@ -36,7 +36,7 @@ public class InscripcionController {
     }
 
     //Path específico para evitar duplicados
-    @GetMapping("/estudiantes/carrera")
+    @GetMapping("/estudiantes/{carrera}")
     public ResponseEntity<List<EstudianteResponseDTO>> findEstudiantesByCarrera(
             @RequestParam Long carreraId,
             @RequestParam(required = false) String ciudad) {

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.integrador3.domain.utils.Genero;
 import org.example.integrador3.service.dto.estudiante.request.EstudianteRequestDTO;
 
 import java.util.HashSet;
@@ -23,8 +24,8 @@ public class Estudiante {
     private String apellido;
     private int edad;
     @Id
-    private int documento;
-    private String genero;
+    private long documento;
+    private Genero genero;
     private String ciudad;
     @OneToMany(mappedBy = "estudiante")
     private Set<Inscripcion> inscripciones;
@@ -35,7 +36,7 @@ public class Estudiante {
         this.apellido=estudiante.getApellido();
         this.edad=estudiante.getEdad();
         this.documento=estudiante.getDocumento();
-        this.genero=estudiante.getGenero();
+        this.genero= estudiante.getGenero();
         this.ciudad=estudiante.getCiudad();
     }
 

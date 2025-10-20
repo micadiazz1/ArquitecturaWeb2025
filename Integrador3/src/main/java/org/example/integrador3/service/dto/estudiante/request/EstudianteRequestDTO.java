@@ -3,6 +3,7 @@ package org.example.integrador3.service.dto.estudiante.request;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Id;
 import lombok.Data;
+import org.example.integrador3.domain.utils.Genero;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
@@ -12,7 +13,7 @@ public class EstudianteRequestDTO{
     private String apellido;
     private int edad;
     private int documento;
-    private String genero;
+    private Genero genero;
     private String ciudad;
 
 }

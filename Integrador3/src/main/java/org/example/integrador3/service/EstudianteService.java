@@ -55,4 +55,8 @@ public class EstudianteService {
     public List<EstudianteResponseDTO> findByGenero(Genero genero){
         return this.estudianteRepository.findByGenero(genero);
     }
+
+    public EstudianteResponseDTO getEstudianteByNumLibreta(Integer numLibreta) {
+        return this.estudianteRepository.findByNumLibreta(numLibreta);
+    }
 }

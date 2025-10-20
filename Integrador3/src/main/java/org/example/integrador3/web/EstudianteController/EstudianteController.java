@@ -2,11 +2,10 @@ package org.example.integrador3.web.EstudianteController;
 
 
 import lombok.RequiredArgsConstructor;
-import org.example.integrador3.domain.Estudiante;
+import org.example.integrador3.domain.utils.Genero;
 import org.example.integrador3.service.EstudianteService;
 import org.example.integrador3.service.dto.estudiante.request.EstudianteRequestDTO;
 import org.example.integrador3.service.dto.estudiante.response.EstudianteResponseDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +32,16 @@ public class EstudianteController {
     public ResponseEntity<EstudianteResponseDTO>saveEstudiante(@RequestBody EstudianteRequestDTO estudiante){
         final var result=this.estudianteService.save(estudiante);
         return ResponseEntity.accepted().body(result);
+    }
+
+    //obtener x libreta
+    @GetMapping("/libreta/{numLibreta}")
+    public EstudianteResponseDTO getEstudianteByNumLibreta(@PathVariable Integer numLibreta){
+        return this.estudianteService.getEstudianteByNumLibreta(numLibreta);
+    }
+    @GetMapping("/genero/{genero}")
+    public List<EstudianteResponseDTO> getEstudiantesByGenero(@PathVariable Genero genero){
+        return this.estudianteService.findByGenero(genero);
     }
 
 

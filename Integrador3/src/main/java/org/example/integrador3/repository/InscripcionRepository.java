@@ -29,7 +29,7 @@ public interface InscripcionRepository extends JpaRepository<Inscripcion, Long> 
            )
            FROM Inscripcion i 
            JOIN i.estudiante e 
-           WHERE i.carrera.idCarrera = :idCarrera AND e.ciudad = :ciudad
+           WHERE i.carrera.id = :idCarrera AND e.ciudad = :ciudad
            """)
     List<EstudianteResponseDTO> findEstudiantesByCarrera(
             @Param("idCarrera") Long idCarrera,

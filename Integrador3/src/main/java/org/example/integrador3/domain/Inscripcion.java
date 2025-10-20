@@ -1,9 +1,6 @@
 package org.example.integrador3.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 import org.example.integrador3.service.dto.inscripcion.request.InscripcionRequestDTO;
 
@@ -17,6 +14,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class Inscripcion {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @ManyToOne
     @JoinColumn(name="id_estudiante", nullable=false)
@@ -35,5 +33,13 @@ public class Inscripcion {
         this.fechaInscripcion = i.getFechaInscripcion();
         this.fechaGraduacion = i.getFechaGraduacion();
         this.antiguedad = i.getAntiguedad();
+    }
+
+    public Inscripcion(Estudiante estudiante, Carrera carrera, Timestamp timestamp, Timestamp timestamp1, int antiguedad) {
+        this.estudiante = estudiante;
+        this.carrera = carrera;
+        this.fechaInscripcion = timestamp;
+        this.fechaGraduacion = timestamp1;
+        this.antiguedad = antiguedad;
     }
 }

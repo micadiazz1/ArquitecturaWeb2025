@@ -16,7 +16,6 @@ import java.util.Set;
 
 public class Carrera {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String nombre;
     private int duracion;
