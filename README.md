@@ -1,5 +1,10 @@
 # Trabajos Practicos Integradores de Arquitectura Web TUDAI 2025
 
+# IMPORTANTE!
+- El TPE de Microservicios se encuentra en el siguiente repositorio:
+[TPE Microservicios](https://github.com/FdezCarlomagno/tpe-microservicios)
+
+
 ---
 
 - Integrantes:
